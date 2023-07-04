@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <script src="http://d3js.org/d3.v5.min.js" charset="utf-8"></script>
+    <!-- <script src="{{url_for('static', filename='index.js')}}"></script> -->
+    <!-- <script src="{{url_for('static', filename='renderPlotly.js')}}"></script> -->
+    <script type="text/javascript" src="/index.js"></script>
+    <script type="text/javascript" src="/renderPlotly.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
+    <style>
+    html, body, h1, h2, h3, h4, h5 {font-family: "Open Sans", sans-serif}
+    </style>
+
+    <script type="text/javascript">
+      function decodeHtml(html) {
+        var txt = document.createElement("textarea");
+        txt.innerHTML = html;
+        return txt.value;
+      }
+    </script>
+    <style>
+      /* The actual timeline (the vertical ruler) */
+.timeline {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* The actual timeline (the vertical ruler) */
+.timeline::after {
+  content: '';
+  position: relative;
+  width: 6px;
+  background-color: #435761;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  margin-left: -3px;
+}
+
+/* Container around content */
+.container {
+  padding: 10px 40px;
+  position: relative;
+  background-color: inherit;
+  width: 60%;
+}
+
+/* The circles on the timeline */
+.container::after {
+  content: '';
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  right: -17px;
+  background-color: #E4DA99;
+  border: 4px solid #E4DA99;
+  top: 15px;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+/* Place the container to the left */
+.left {
+  left: -25%;
+}
+
+/* Place the container to the right */
+.right {
+  left: 33%;
+}
+
+/* Add arrows to the left container (pointing right) */
+.left::before {
+  content: " ";
+  height: 0;
+  position: absolute;
+  top: 22px;
+  width: 0;
+  z-index: 1;
+  right: 30px;
+  border: medium solid #435761;
+  border-width: 10px 0 10px 10px;
+  border-color: transparent transparent transparent #435761;
+}
+
+/* Add arrows to the right container (pointing left) */
+.right::before {
+  content: " ";
+  height: 0;
+  position: absolute;
+  top: 22px;
+  width: 0;
+  z-index: 1;
+  left: 30px;
+  border: medium solid #435761;
+  border-width: 10px 10px 10px 0;
+  border-color: transparent #435761 transparent transparent;
+}
+
+/* Fix the circle for containers on the right side */
+.right::after {
+  left: -16px;
+}
+
+/* The actual content */
+.content {
+  padding: 20px 30px;
+  background-color: white;
+  position: relative;
+  border-radius: 6px;
+}
+
+/* Media queries - Responsive timeline on screens less than 600px wide */
+@media screen and (max-width: 600px) {
+  /* Place the timelime to the left */
+  .timeline::after {
+  left: 31px;
+  }
+
+  /* Full-width containers */
+  .container {
+  width: 100%;
+  padding-left: 70px;
+  padding-right: 25px;
+  }
+
+  /* Make sure that all arrows are pointing leftwards */
+  .container::before {
+  left: 60px;
+  border: medium solid white;
+  border-width: 10px 10px 10px 0;
+  border-color: transparent #435761 transparent transparent;
+  }
+
+  /* Make sure all circles are at the same spot */
+  .left::after, .right::after {
+  left: 15px;
+  }
+
+  /* Make all right containers behave like the left ones */
+  .right {
+  left: -25px;
+  }
+}
+
+.firstcharacter {
+  color: #903;
+  float: left;
+  font-family: Georgia;
+  font-size: 75px;
+  line-height: 60px;
+  padding-top: 4px;
+  padding-right: 8px;
+  padding-left: 3px;
+}
+
+.shadow{
+  -webkit-box-shadow: 10px 10px 5px -10px rgba(0,0,0,0.75);
+  -moz-box-shadow: 10px 10px 5px -10px rgba(0,0,0,0.75);
+  box-shadow: 10px 10px 5px -10px rgba(0,0,0,0.75);
+  border-radius: 10px;
+}
+
+.shadow-r{
+  -webkit-box-shadow: -10px 11px 5px -10px rgba(0,0,0,0.75);
+  -moz-box-shadow: -10px 11px 5px -10px rgba(0,0,0,0.75);
+  box-shadow: -10px 11px 5px -10px rgba(0,0,0,0.75);
+  border-radius: 8px;
+}
+
+
+    </style>
+
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">GSANALYTICS</a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="dashboard">Dashboard</a></li>
+          <li><a href="spanish_flu">Spanish Flu</a></li>
+          <li><a href="asian_flu">Asian Flu</a></li>
+          <li><a href="hong_kong_flu">Hong Kong Flu</a></li>
+          <li><a href="swine_flu">Swine Flu</a></li>
+          <li><a href="coronavirus">COVID-19</a></li>
+          <li><a href="combined_data">Charts</a></li>
+          <li><a href="conclusions">Conclusions</a></li>
+        </ul>
+      </div>
+    </nav>
+
+
+    <!-- Page Container -->
+    <div class="w3-container w3-content" style="max-width:1400px;margin-top:80px">
+      <!-- The Grid -->
+      <div class="w3-row">
+        <!-- Left Column -->
+        <div class="w3-col m3">
+
+          <!-- Profile -->
+          <div class="w3-card w3-round w3-white">
+            <div class="w3-container">
+             <h4 class="w3-center">Pandemics in Recent History</h4>
+             <p class="w3-center"></p>
+             <hr>
+             <p><i class="fa w3-margin-right w3-text-theme">Spanish Flu(H1N1): <strong>1918–1920</strong></i></p>
+             <p><i class="fa w3-margin-right w3-text-theme">Asian Flu (H2N2): <strong>1957–1958</strong></i></p>
+             <p><i class="fa w3-margin-right w3-text-theme">Hong Kong Flu: <strong>1968–1969</strong></i></p>
+             <p><i class="fa w3-margin-right w3-text-theme">Swine Flu (H1N1): <strong>2009–2010</strong></i></p>
+             <p><i class="fa w3-margin-right w3-text-theme">Coronavirus (COVID-19): <strong>2019-Present</i></strong></p>
+            </div>
+          </div>
+          <br>
+
+          <div class="w3-card w3-round w3-white w3-center">
+            <img src="/pandemic3.jpg" alt="image" style="width:100%">
+          </div>
+          <br>
+
+          <!-- Accordion -->
+          <div class="w3-card w3-round">
+            <div class="w3-white">
+              <button onclick="myFunction('Demo1')" class="w3-button w3-block w3-theme-l1 w3-left-align"><i class="fa fa-circle-o-notch fa-fw w3-margin-right"></i> Extraction</button>
+              <div id="Demo1" class="w3-hide w3-container">
+                <p>Sources of data were found. See the sources file for details. Data was often pasted from web pages into Excel. From excel manipulated using vba and pivot tables. Then csv files exported. </p>
+              </div>
+              <button onclick="myFunction('Demo2')" class="w3-button w3-block w3-theme-l1 w3-left-align"><i class="fa fa-calendar-check-o fa-fw w3-margin-right"></i> Transformation</button>
+
+              <div id="Demo2" class="w3-hide w3-container">
+                <p>Using Python pandas data was compiled into tables and then given titles etc and some basic math was done like creating ratios. </p>
+              </div>
+              <button onclick="myFunction('Demo3')" class="w3-button w3-block w3-theme-l1 w3-left-align"><i class="fa fa-users fa-fw w3-margin-right"></i> Loading</button>
+              <div id="Demo3" class="w3-hide w3-container">
+                <p> Data was loaded into mongoDB. We created 2 schemas. One for dow/gold etc. One for US deaths vs change in DOW/GOLD </p>
+             <!--div class="w3-row-padding">
+             <br>
+               <div class="w3-half">
+                 <img src="#" style="width:100%" class="w3-margin-bottom">
+               </div>
+               <div class="w3-half">
+                 <img src="#" style="width:100%" class="w3-margin-bottom">
+               </div>
+               <div class="w3-half">
+                 <img src="#" style="width:100%" class="w3-margin-bottom">
+               </div>
+               <div class="w3-half">
+                 <img src="#" style="width:100%" class="w3-margin-bottom">
+               </div>
+               <div class="w3-half">
+                 <img src="#" style="width:100%" class="w3-margin-bottom">
+               </div>
+               <div class="w3-half">
+                 <img src="#" style="width:100%" class="w3-margin-bottom">
+               </div>
+             </div-->
+              </div>
+            </div>
+          </div>
+          <br>
+
+          <!-- Interests -->
+          <div class="w3-card w3-round w3-white w3-hide-small">
+            <div class="w3-container">
+              <p>Interests Rates</p>
+              <p>
+
+              </p>
+            </div>
+          </div>
+          <br>
+
+          <div class="w3-card w3-round w3-white w3-center">
+            <img src="/gold_and_dow.jpg" alt="image" style="width:100%"><br>
+          </div>
+
+        <!-- End Left Column -->
+        </div>
+
+        <!-- Middle Column -->
+        <div class="w3-col m7">
+
+          <div class="w3-row-padding">
+            <div class="w3-col m12">
+              <div class="w3-card w3-round w3-white">
+                <div class="w3-container w3-padding">
+                  <!-- <h6 class="w3-opacity"></h6> -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="w3-container w3-card w3-white w3-round w3-margin"><br>
+            <!-- <img src="#" alt="Metrics" class="w3-left w3-circle w3-margin-right" style="width:60px"> -->
+            <span class="w3-right w3-opacity">1 min</span>
+            <h4><strong>Death Toll vs Market Activity</strong></h4><br>
+            <hr class="w3-clear">
+            <div>
+              <div id="monthlyDeaths" value="monthlyDeaths">
+                <canvas id="deathChart" width="600" height="600"></canvas>
+                <script>
+                  renderMonthlyDeaths("deathChart", decodeHtml( '{{ jsonDeathData }}' ) )
+                </script>
+              </div>
+            </div>
+            <br>
+            <p>Is gold a good hedge during a pandemic? This is the question we set out to answer. At the onset of COVID 19 the gold was favored over the DOW. That was the point at which the question arouse.</p>
+              <div class="w3-row-padding" style="margin:0 -16px">
+                <div class="w3-half">
+                  <!-- <img src="#" style="width:100%" alt="bar charts" class="w3-margin-bottom"> -->
+                </div>
+                <div class="w3-half">
+                  <!-- <img src="#" style="width:100%" alt="charts" class="w3-margin-bottom"> -->
+              </div>
+            </div>
+          </div>
+
+          <div class=" w3-container w3-card w3-white w3-round w3-margin"><br>
+            <!-- <img src="#" alt="Metrics" class="w3-left w3-circle w3-margin-right" style="width:60px"> -->
+            <span class="w3-right w3-opacity">16 min</span>
+            <h4><strong>Findings</strong></h4><br>
+            <hr class="w3-clear">
+            <div>
+              <img src="/deathsvsdelta.png" alt="image" style="width:100%">
+            </div>
+            <br>
+            <p>As seen in the charts above that the correlation is low. After researching the data for market trends of 5 of most recent pandemics and their history(seen below), we could not conlude definitively that yes gold is a good hegde. Further study would be necessary but we largely found that the correlation is just not there.</p>
+          </div>
+          <div class=" w3-container w3-card w3-white w3-round w3-margin"><br>
+            <!-- <span class="w3-right w3-opacity">16 min</span> -->
+            <h4>Overview</h4><br>
+            <hr class="w3-clear">
+            <p><span class="firstcharacter">I</span>n times of uncertainty the public strive to find the silver lining, however in our project in this time of Covid19 and economic uncertainty we have endeavored as it were to find the <em>golden lining</em>.<br/>
+              <br>
+              In the broader context of history because nothing happens in a vaccum, the main take aways from our investigation is that of out of the five pandemics, (that have occurred in the last 100 years) the first three pandemics the price of gold wre not affected. Based on our research it appears that the price of gold was more affected by monetary policy and the industrial output than the pandemics themselves, as it will become evident with the charts and graph that we have created. <br>
+              However for the last two pandemics this is not true, in fact, in a new service economy that is served by modern monetary policy, the price of gold has been subject to market fluctuations and to some degree by the pandemics in the last 20 years. For example in 2009 the price of gold grew by 27.86% in that year alone and this year during the Coronavirus pandemic the price of gold is up 24%. It can be argued that in 2009 the price of gold was much more affected by the financial meltdown than by the pandemic, but one thing we have learned is that major pandemics happens during extreme moments in history that are engolfed by either wars or financial crisis.</p>
+
+          </div>
+
+          <!-- <div class="w3-card w3-white w3-round w3-margin"><br>
+            <hr class="w3-clear"> -->
+            <!-- </div>
+          </div> -->
+
+        <!-- End Middle Column -->
+        </div>
+
+        <!-- Right Column -->
+        <div class="w3-col m2">
+          <div class="w3-card w3-round w3-white w3-center">
+            <div class="w3-container">
+              <div class="w3-card w3-round w3-white w3-hide-small">
+                <img src="pandemic2.jfif" alt="image" style="width:100%">
+              </div>
+            </div>
+          </div>
+          <br>
+
+          <!-- <div class="w3-card w3-round w3-white w3-center">
+            <div class="w3-container">
+              <p><strong>Survey:</strong></p>
+              <img src="#" alt="image" style="width:50%"><br>
+              <span>Have you tested positive for COVID 19?</span>
+              <div class="w3-row w3-opacity">
+                <div class="w3-half">
+                  <button class="w3-button w3-block w3-green w3-section" title="Accept"><i class="fa fa-check"></i></button>
+                </div>
+                <div class="w3-half">
+                  <button class="w3-button w3-block w3-red w3-section" title="Decline"><i class="fa fa-remove"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br> -->
+
+          <div class="w3-card w3-round w3-white w3-center">
+            <img src="/pandemic.jfif" alt="image" style="width:100%">
+          </div>
+          <br>
+
+        <!-- End Right Column -->
+        </div>
+
+      <!-- End Grid -->
+      </div>
+
+    <!-- End Page Container -->
+    </div>
+
+    <!-- timeline begins -->
+
+    <div class="timeline">
+      <div class="container left shadow">
+
+        <div class="content">
+          <h3>1918-1919 Spanish Flu</h3>
+
+            <img src="{{url_for('static', filename='/imgs/combined/spanish.png')}}"  class="img-responsive">
+
+          <ul>
+            <li>Spanish Flu 1918 jan – 1920 dec 50 million dead H1N1 virus</li>
+            <li>Despite WWI and a raging pandemic the price of gold remained virturally unchaged at 1.85%</li>
+            <li>Monetary policy and interest rates contributed for the price of gold to grow at 1.908% per year for 13 years</li>
+            <li>In 1933 the Brentton Woods accord between WWI allies passed this agreement peg an onze of gold at $35 US dollars </li>
+            <li>The FDR and his administration breaks its promis to redeem the dollar for gold</li>
+            <li>Additionally the US government outlaws regular transactions in gold coins</li>
+          </ul>
+        </div>
+      </div>
+      <div class="container right shadow-r">
+        <div class="content">
+          <h3>Asian Flu 1957 - 1958</h3>
+
+          <img src="{{url_for('static', filename='/imgs/combined/asianflu.png')}}"  class="img-responsive">
+
+
+          <ul>
+          <li> Asian Flu	1957 jan –1958	1.5 to 2 million dead	H2N2 virus</li>
+          <li>It's been 25 years since the Brentton Woods agreement and the price of gold has remained unchaged at $35 dollars </li>
+          <li>In August 1957, the country slipped into a recession that would increase unemployment by 7 percent and reduce corporate profits by 25 percent by April 1958</li>
+          <li>The price of gold goes completely unaffected during this pandemic</li>
+        </ul>
+        </div>
+      </div>
+      <div class="container left shadow">
+        <div class="content">
+          <h3>Hong Kong Flu 1968</h3>
+
+          <img src="{{url_for('static', filename='/imgs/combined/hkflu.png')}}"  class="img-responsive">
+
+
+          <ul>
+            <li>Hong Kong Flu	1968 july – 1970 march	1 million dead	H3N2 virus
+            </li>
+            <li>For the first time in 35 years the price of gold jumps to $41 in Jan of 1968</li>
+            <li>Through the duration of this pandemic between 1968 - 1969 the price of gold grows at 3.89%</li>
+            <li>It's impossible to speak of 1968 without mentioning the Vietnam War and its effects on the economy</li>
+            <li>The H3N2 virus that caused the 1968 pandemic is still in circulation today and is considered to be a strain of seasonal influenza.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="container right shadow-r">
+        <div class="content">
+          <h3>Swine Flu 2009</h3>
+
+          <img src="{{url_for('static', filename='/imgs/combined/swineflu.png')}}"  class="img-responsive">
+
+          <li>Swine Flu	2009 april –2010	over 284,000	dead novel H1N1 virus</li>
+          <li>No longer link by the gold standard, the price of gold is subject to market fluctuations and supply and demand like to other commodoties</li>
+          <li>Price of gold grew by 33% in between april-2009 and april 2010 that coincides with the Swine Flu</li>
+          <li>The great recession wich lasted between Dec-2007 and Jun-2009 </li>
+          <li>The FDR and his administration breaks its promis to redeem the dollar for gold</li>
+          <li>Additionally the US government outlaws regular transactions in gold coins</li>
+        </div>
+      </div>
+      <div class="container left shadow">
+        <div class="content">
+          <h3>Covid-19</h3>
+
+          <img src="{{url_for('static', filename='/imgs/combined/covid.png')}}"  class="img-responsive">
+          <ul>
+            <li>Covid 19 2019 dec -present 393,000 (june 7th) SARS COV 2 virus</li>
+            <li>The price of gold jump 24% in the span of three months</li>
+            <li>The American economy has come to screetching halt</li>
+            <li>Although the price of gold has surged other commodoties such as oil has plunge in the market.</li>
+            <li>Americans are under quarantine and lockdown</li>
+          </ul>
+
+        </div>
+      </div>
+
+    <br>
+
+    <!-- Footer -->
+    <!-- <footer class="w3-container w3-theme-d3 w3-padding-16">
+      <h5>Footer</h5>
+    </footer>
+
+    <footer class="w3-container w3-theme-d5">
+      <p>Powered by Gold <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
+    </footer> -->
+
+    <script>
+    // Accordion
+    function myFunction(id) {
+      var x = document.getElementById(id);
+      if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+        x.previousElementSibling.className += " w3-theme-d1";
+      } else {
+        x.className = x.className.replace("w3-show", "");
+        x.previousElementSibling.className =
+        x.previousElementSibling.className.replace(" w3-theme-d1", "");
+      }
+    }
+
+    // Used to toggle the menu on smaller screens when clicking on the menu button
+    function openNav() {
+      var x = document.getElementById("navDemo");
+      if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+      } else {
+        x.className = x.className.replace(" w3-show", "");
+      }
+    }
+    </script>
+
+</body>
+
+</html>
